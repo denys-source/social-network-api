@@ -30,6 +30,7 @@ class Like(models.Model):
 
     class Meta:
         ordering = ("-created_at",)
+        unique_together = ("post", "user")
 
     def __str__(self):
         return f"Like on post '{self.post.title}' by {self.user.name}"
