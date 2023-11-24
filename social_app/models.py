@@ -33,4 +33,4 @@ class Like(models.Model):
         unique_together = ("post", "user")
 
     def __str__(self):
-        return f"Like on post '{self.post.title}' by {self.user.name}"
+        return f"Like on post '{self.post.title}' by {self.user.username}"
