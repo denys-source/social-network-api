@@ -5,8 +5,9 @@ from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("social_app.urls")),
     path("api/user/", include("user.urls")),
+    path("api/posts/", include("social_app.urls")),
+    path("api/analytics/", include("analytics.urls")),
 ] + (
     [
         path("__debug__/", include("debug_toolbar.urls")),

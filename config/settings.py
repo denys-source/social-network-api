@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "social_app",
     "user",
+    "analytics",
 ]
 
 MIDDLEWARE = [
