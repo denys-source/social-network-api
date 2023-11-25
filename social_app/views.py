@@ -7,6 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import status
 
 from social_app.models import Like, Post
+from social_app.permissions import IsOwnerOrAdminElseReadOnly
 from social_app.serializers import (
     PostDetailSerializer,
     PostListSerializer,
@@ -17,9 +18,13 @@ from social_app.serializers import (
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = [IsOwnerOrAdminElseReadOnly]
 
     def get_queryset(self):
         queryset = self.queryset
+
+        if self.action == "list":
+            queryset = queryset.select_related("user")
 
         if self.action in ("list", "retrieve"):
             queryset = queryset.annotate(likes_count=Count("likes"))
