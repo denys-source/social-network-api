@@ -44,3 +44,18 @@ class LikesAnalytics(APIView):
             .annotate(likes_count=Count("id"))
         )
         return Response(list(data), status=status.HTTP_200_OK)
+
+
+class UserAnalytics(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request) -> Response:
+        data = {
+            "last_login": request.user.last_login.strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+            "last_active": request.user.last_active.strftime(
+                "%Y-%m-%d %H:%M:%S"
+            ),
+        }
+        return Response(data, status=status.HTTP_200_OK)
