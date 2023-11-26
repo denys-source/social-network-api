@@ -31,7 +31,7 @@ class PostViewSet(ModelViewSet):
         if self.action in ("list", "retrieve"):
             queryset = queryset.annotate(likes_count=Count("likes"))
 
-        return queryset
+        return queryset.order_by("-created_at")
 
     def get_serializer_class(self):
         if self.action == "list":
