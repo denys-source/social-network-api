@@ -7,3 +7,5 @@ urlpatterns = [
     path("", LikesAnalytics.as_view(), name="likes_analytics"),
     path("user/", UserAnalytics.as_view(), name="user_analytics"),
 ]
+
+app_name = "analytics"
