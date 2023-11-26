@@ -5,9 +5,11 @@ from user.serializers import UserSerializer
 
 
 class LikeSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Like
-        fields = ("id", "user",)
+        fields = ("user",)
 
 
 class PostSerializer(serializers.ModelSerializer):
