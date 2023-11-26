@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "drf_spectacular",
     "debug_toolbar",
     "social_app",
     "user",
@@ -141,4 +142,11 @@ REST_FRAMEWORK = {
         "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
         "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     },
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Social Network API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }

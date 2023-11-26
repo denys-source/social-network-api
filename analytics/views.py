@@ -2,6 +2,14 @@ from datetime import datetime
 
 from django.utils import timezone
 from django.db.models import F, Count
+from drf_spectacular.utils import (
+    OpenApiExample,
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+    inline_serializer,
+)
+from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -21,6 +29,32 @@ def is_date_correct(date_str: str) -> bool:
 class LikesAnalytics(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "date_from",
+                description="Start date to use for filtering. Format: YYYY-MM-DD",
+                type={"type": "date"},
+            ),
+            OpenApiParameter(
+                "date_to",
+                description="End date to use for filtering (inclusive). Format: YYYY-MM-DD",
+                type={"type": "date"},
+            ),
+        ],
+        responses={
+            200: inline_serializer(
+                name="LikesAnalyticsResponse",
+                fields={
+                    "date": serializers.DateField(),
+                    "likes_count": serializers.IntegerField(),
+                },
+            ),
+            400: OpenApiResponse(
+                description="Date format is incorrect. Has to be in format YYYY-MM-DD"
+            ),
+        },
+    )
     def get(self, request: Request) -> Response:
         date_from = request.query_params.get(
             "date_from", str(timezone.now().date())
@@ -49,6 +83,26 @@ class LikesAnalytics(APIView):
 class UserAnalytics(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        responses={
+            200: inline_serializer(
+                name="UserAnalyticsResponse",
+                fields={
+                    "last_login": serializers.CharField(),
+                    "last_active": serializers.CharField(),
+                },
+            )
+        },
+        examples=[
+            OpenApiExample(
+                name="Example",
+                value={
+                    "last_login": "2023-01-01 12:00:00",
+                    "last_active": "2023-01-01 12:00:00",
+                },
+            )
+        ],
+    )
     def get(self, request: Request) -> Response:
         data = {
             "last_login": request.user.last_login.strftime(
