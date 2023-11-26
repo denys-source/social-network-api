@@ -13,4 +13,6 @@ class IsOwnerOrAdminElseReadOnly(BasePermission):
     def has_object_permission(
         self, request: Request, view: APIView, obj: Any
     ) -> bool:
+        if request.method in SAFE_METHODS:
+            return True
         return request.user.is_staff or request.user == obj.user
