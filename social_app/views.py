@@ -23,8 +23,10 @@ class PostViewSet(ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
 
-        if self.action == "list":
-            queryset = queryset.select_related("user")
+        if self.action in ("list", "retrieve"):
+            queryset = queryset.select_related("user").prefetch_related(
+                "likes__user"
+            )
 
         if self.action in ("list", "retrieve"):
             queryset = queryset.annotate(likes_count=Count("likes"))
