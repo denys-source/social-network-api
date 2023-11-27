@@ -1,8 +1,10 @@
 from django.db.models import Count
 from rest_framework.decorators import api_view
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import status
 
@@ -44,17 +46,21 @@ class PostViewSet(ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-@api_view(["POST"])
-def like_post(request: Request, pk: int) -> Response:
-    post = get_object_or_404(Post, pk=pk)
-    _, created = Like.objects.get_or_create(user=request.user, post=post)
-    if created:
-        return Response(status=status.HTTP_201_CREATED)
-    return Response(status=status.HTTP_200_OK)
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request, pk: int) -> Response:
+        post = get_object_or_404(Post, pk=pk)
+        _, created = Like.objects.get_or_create(user=request.user, post=post)
+        if created:
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_200_OK)
 
 
-@api_view(["POST"])
-def unlike_post(request: Request, pk: int) -> Response:
-    post = get_object_or_404(Post, pk=pk)
-    Like.objects.filter(user=request.user, post=post).delete()
-    return Response(status=status.HTTP_200_OK)
+class UnlikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request: Request, pk: int) -> Response:
+        post = get_object_or_404(Post, pk=pk)
+        Like.objects.filter(user=request.user, post=post).delete()
+        return Response(status=status.HTTP_200_OK)
